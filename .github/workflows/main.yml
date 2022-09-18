@@ -5,23 +5,23 @@ on:
     branches: [master]
 
 jobs:
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         
-      - name: Set up Node 14
-        uses: actions/setup-node@v3
-        with:
-           node-version: 14
-      - name: install Snyk CLI
-        run: npm install -g snyk
-      - name: run Snyk Open Source Test
-        run: snyk test
-      - name: run Snyk Code Test
-        run: snyk code test
-
       - name: Build, Push and Release a Docker container to Heroku. # Your custom step name
         uses: gonuit/heroku-docker-deploy@v1.3.3 # GitHub action name (leave it as it is).
         with:
